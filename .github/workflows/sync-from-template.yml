@@ -36,8 +36,10 @@ jobs:
             exit 0
           fi
 
-          # 从母版检出这些文件（覆盖本地）
-          echo "$FILES" | xargs git checkout upstream/main --
+          # 从母版检出这些文件（逐行处理中文文件名）
+          echo "$FILES" | while IFS= read -r f; do
+            git checkout upstream/main -- "$f" 2>/dev/null || echo "跳过: $f"
+          done
 
       - name: 提交并推送（如有更新）
         run: |
